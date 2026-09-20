@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -21,17 +22,21 @@ func getArticle(c *gin.Context) {
 		// Check if the article exists
 		if article, err := getArticleByID(articleID); err == nil {
 			// Call the HTML method of the Context to render a template
-			c.HTML(
-				// Set the HTTP status to 200 (OK)
-				http.StatusOK,
-				// Use the index.html template
-				"article.html",
-				// Pass the data that the page uses
-				gin.H{
-					"title":   article.Title,
-					"payload": article,
-				},
-			)
+			// c.HTML(
+			// 	// Set the HTTP status to 200 (OK)
+			// 	http.StatusOK,
+			// 	// Use the index.html template
+			// 	"article.html",
+			// 	// Pass the data that the page uses
+			// 	gin.H{
+			// 		"title":   article.Title,
+			// 		"payload": article,
+			// 	},
+			// )
+			render(c, gin.H{
+				"title":   article.Title,
+				"payload": article,
+			}, "article.html")
 
 		} else {
 			// If the article is not found, abort with an error
@@ -45,6 +50,7 @@ func getArticle(c *gin.Context) {
 }
 
 func render(c *gin.Context, data gin.H, templateName string) {
+	fmt.Println("Accept: ", c.Request.Header.Get("Accept"))
 	switch c.Request.Header.Get("Accept") {
 	case "application/json":
 		// Response with JSON
